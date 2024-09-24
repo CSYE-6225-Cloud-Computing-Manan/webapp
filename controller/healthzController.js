@@ -2,8 +2,10 @@ const healthService = require('../service/healthService.js');
 
 const healthCheck = async(request, response) => {
       response.set('Cache-Control', 'no-cache');
-      
-      if(Object.keys(request.body).length > 0){
+
+      const contentLength = request.headers['content-length'];
+      console.log('Content-Length: ' + contentLength);
+      if(Object.keys(request.body).length > 0 || Object.keys(request.query).length > 0 || (contentLength != undefined && contentLength > 0)){
             return response.status(400).send();
       }
 
@@ -18,11 +20,5 @@ const healthCheck = async(request, response) => {
       }
 }
 
-const otherHttpsHealthCheck = async(request, response) => {
 
-      console.log('Wrong HTTPS method used');
-
-      return response.status(405).send();
-}
-
-module.exports = { healthCheck, otherHttpsHealthCheck };
+module.exports = { healthCheck };
