@@ -8,4 +8,15 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
       }
 );
 
-module.exports = sequelize;
+const bootstrapConnection = async () => {
+      try {
+            //await sequelize.authenticate();
+            await sequelize.sync();
+            console.log('Connection to the database and insync established successfully.');
+      } catch( error ){
+            console.log('Error while bootstrapping the database: ', error);
+            return error;
+      }
+};
+
+module.exports = {sequelize, bootstrapConnection};
