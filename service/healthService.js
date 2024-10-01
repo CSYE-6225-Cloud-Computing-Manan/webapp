@@ -1,4 +1,4 @@
-const sequelize = require('../config/db.config.js');
+const { sequelize } = require('../config/db.config.js');
 
 const checkDbHealth = async() => {
       try {

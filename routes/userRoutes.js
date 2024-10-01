@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../controller/userController.js');
+const authMiddleware = require('../middleware/authenticateBasic.js');
 
 console.log("In userRoutes.js");
 
@@ -12,7 +14,8 @@ router.use('/', (request, response, next) => {
   next();
 });
 
-router.post();
-router.get(); // parameterized
-router.put(); // parameterized
+router.post('/', userController.createUser);
+router.get('/self', authMiddleware, userController.getUser);
+router.put('/self', authMiddleware, userController.updateUser);
 
+module.exports = router;

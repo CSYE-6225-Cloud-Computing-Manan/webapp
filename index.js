@@ -8,6 +8,8 @@ app.use(express.json());
 
 app.use(routes);
 
+//console.log(sequelize);
+
 app.listen(port, async () => {
       try{
             await sequelize.bootstrapConnection();

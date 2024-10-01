@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db.config.js');
+const { sequelize } = require('../config/db.config.js');
 
 const User = sequelize.define('User', {
       id: {
@@ -63,9 +63,18 @@ const User = sequelize.define('User', {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false,
-      },
-      timestamps: false,
-
-});
+      }
+},
+      {
+            timestamps: false,
+            hooks: {
+                  beforeUpdate: (user, options) => {
+                      if (user.changed('first_name') || user.changed('last_name') || user.changed('password')) {
+                          user.account_updated = new Date();
+                      }
+                  }
+            }
+      }
+);
 
 module.exports = User;

@@ -1,26 +1,41 @@
 const bcrypt = require('bcrypt');
-const { User } = require('../models/userSchema.js');
+const User = require('../models/userSchema.js');
 
 const userAuthencation = async (request, response, next) => {
       try{
             const userToken = request.headers.authorization;
-
+            console.log('userToken: ', userToken);
+            
             if (!userToken || userToken.indexOf('Basic ') === -1) {
-                  return res.status(401).json({});
+                  return response.status(401).json({});
             }
-            const base64Creds =  userToken.split(' ')[1];
-            const [username, password] = Buffer.from(base64Credentials, 'base64').toString('utf-8').split(':'); //token format- "username:password"
 
-            const user = await User.findOne({ where: { email: username } });
+            console.log('request method ' + request.method);
+            
+            const base64Creds =  userToken.split(' ')[1];
+            console.log('base64Creds', base64Creds);
+            
+            const [username, password] = Buffer.from(base64Creds, 'base64').toString('utf-8').split(':'); //token format- "username:password"
+            console.log('username: ', username, " password: ", password);
+            
+            const user = await User.findOne({ 
+                  where: { 
+                        email: username
+                  }
+            });
       
-              if (!user || !(await bcrypt.compare(password, user.password))) {
-                  return res.status(401).send({});
+              if (!user) {
+                  return response.status(401).send();
+              }else if(user && request.method === 'GET' && !(await bcrypt.compare(password, user.password))){
+                  return response.status(400).send();
               }
 
               request.authenticatedUser = {
                   Id: user.id,
-                  username: user.username
+                  username: user.email
               };
+
+              console.log(request.authenticatedUser);
               next();
       }catch (error) {
             console.log('Error while authenticating user: ', error);
