@@ -96,8 +96,8 @@ const getUser = async(request, response) => {
                   email: user.email,
                   first_name: user.first_name,
                   last_name: user.last_name,
-                  account_created: user.createdAt,
-                  account_updated: user.updatedAt
+                  account_created: user.account_created,
+                  account_updated: user.account_updated
             });
             
       } catch(error){
