@@ -18,22 +18,28 @@ const createUser = async(request, response) => {
             console.log('content type at user controller: ' + request.headers['content-type']);
             console.log('Request body from createUser controller: ', request.body);
 
-            if(Object.keys(request.body).length !== 4 || Object.keys(request.query).length > 0 || request.headers['content-type'] != 'application/json'){
+            if(Object.keys(request.query).length > 0 || request.headers['content-type'] != 'application/json'){
                   console.log('Invalid request body for user controller create method');
                   return response.status(400).send(); //bad request
             }
             
-            const { email, first_name, last_name, password } = request.body;
+            const {first_name, last_name, password, email, ...ignoredFields} = request.body;
             console.log('Email from createUser controller: ', email, ' first_name: ', first_name, ' last_name: ', last_name, ' password: ', password);
 
             const emailFormat = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             
+            if (Object.keys(ignoredFields).length > 0) {
+                  console.log('Invalid request body, ignored');
+                  return response.status(400).send();
+              }
+
             if(!email.match(emailFormat)){
                   console.log('Invalid email format');
                   return response.status(400).send(); //bad request
             }
 
             if (!email || !first_name || !last_name || !password) {
+                  console.log("Invalid types");
                   return response.status(400).send(); //bad request
             }
 
@@ -54,7 +60,7 @@ const createUser = async(request, response) => {
                   return response.status(400).send(); //bad request
             }
 
-            return response.status(200).send(); //returning when user got created susccessfully
+            return response.status(201).send(); //returning when user got created susccessfully
       } catch(error){
             console.log('Error while creating user: ', error);
             return response.status(503).send();
@@ -120,14 +126,19 @@ const updateUser = async(request, response) => {
       }
 
       try{
-            if(Object.keys(request.body).length !== 3 || Object.keys(request.query).length > 0 || request.headers['content-type'] != 'application/json'){
+            if(Object.keys(request.query).length > 0 || request.headers['content-type'] != 'application/json'){
                   console.log('Invalid request body for user controller update method');
                   return response.status(400).send();
             }
 
-            const { first_name, last_name, password } = request.body;
+            const { first_name, last_name, password, ...ignoredFields} = request.body;
             console.log('Request body from updateUser controller');
             console.log('first_name: ', first_name, ' last_name: ', last_name, ' password: ', password);
+
+            if(Object.keys(ignoredFields).length > 0){
+                  console.log('Invalid request body, ignored at update');
+                  return response.status(400).send();
+            }
 
             if(!first_name || !last_name || !password){
                   console.log('Invalid request body for user controller update method');

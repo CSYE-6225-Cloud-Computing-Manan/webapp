@@ -6,11 +6,25 @@ const authMiddleware = require('../middleware/authenticateBasic.js');
 console.log("In userRoutes.js");
 
 router.use('/', (request, response, next) => {
-  if(request.method !== 'GET' && request.method !== 'POST' && request.method !== 'PUT'){
+  const method = request.method;
+  const path = request.path;
+
+  if (method !== 'GET' && method !== 'POST' && method !== 'PUT') {
     response.set('Cache-Control', 'no-cache');
     console.log('Wrong HTTPS method used in user routes');
     return response.status(405).send();
   }
+
+  if (method === 'POST' && path !== '/') {
+    console.log('POST request beyond "/" is not allowed');
+    return response.status(405).send();
+  }
+
+  if ((method === 'GET' || method === 'PUT') && path !== '/self') {
+    console.log(`${method} request beyond '/self' is not allowed`);
+    return response.status(405).send();
+  }
+
   next();
 });
 

@@ -3,11 +3,12 @@ const User = require('../models/userSchema.js');
 
 const userAuthencation = async (request, response, next) => {
       try{
+            response.set('Cache-Control', 'no-cache');
             const userToken = request.headers.authorization;
             console.log('userToken: ', userToken);
             
             if (!userToken || userToken.indexOf('Basic ') === -1) {
-                  return response.status(401).json({});
+                  return response.status(401).send();
             }
 
             console.log('request method ' + request.method);
@@ -27,7 +28,7 @@ const userAuthencation = async (request, response, next) => {
               if (!user) {
                   return response.status(401).send();
               }else if(user && request.method === 'GET' && !(await bcrypt.compare(password, user.password))){
-                  return response.status(400).send();
+                  return response.status(401).send();
               }
 
               request.authenticatedUser = {
