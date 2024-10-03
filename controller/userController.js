@@ -60,7 +60,14 @@ const createUser = async(request, response) => {
                   return response.status(400).send(); //bad request
             }
 
-            return response.status(201).send(); //returning when user got created susccessfully
+            return response.status(201).send({
+                  Id: user.id,
+                  email: user.email,
+                  first_name: user.first_name,
+                  last_name: user.last_name,
+                  account_created: user.account_created,
+                  account_updated: user.account_updated
+            }); //returning when user got created susccessfully
       } catch(error){
             console.log('Error while creating user: ', error);
             return response.status(503).send();
