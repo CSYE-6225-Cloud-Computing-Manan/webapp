@@ -27,7 +27,7 @@ const userAuthencation = async (request, response, next) => {
       
               if (!user) {
                   return response.status(401).send();
-              }else if(user && request.method === 'GET' && !(await bcrypt.compare(password, user.password))){
+              }else if(user && !(await bcrypt.compare(password, user.password))){
                   return response.status(401).send();
               }
 
