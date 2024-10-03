@@ -62,9 +62,9 @@ const createUser = async(request, response) => {
 
             return response.status(201).send({
                   Id: user.id,
-                  email: user.email,
                   first_name: user.first_name,
                   last_name: user.last_name,
+                  email: user.email,
                   account_created: user.account_created,
                   account_updated: user.account_updated
             }); //returning when user got created susccessfully
@@ -138,21 +138,23 @@ const updateUser = async(request, response) => {
                   return response.status(400).send();
             }
 
-            const { first_name, last_name, password, ...ignoredFields} = request.body;
+            const { first_name, last_name, password, email, ...ignoredFields} = request.body;
             console.log('Request body from updateUser controller');
-            console.log('first_name: ', first_name, ' last_name: ', last_name, ' password: ', password);
+            console.log('first_name: ', first_name, ' last_name: ', last_name, ' password: ', password, ' email: ', email);
+
+            const emailFormat = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
             if(Object.keys(ignoredFields).length > 0){
                   console.log('Invalid request body, ignored at update');
                   return response.status(400).send();
             }
 
-            if(!first_name || !last_name || !password){
+            if(!first_name || !last_name || !password || !email){
                   console.log('Invalid request body for user controller update method');
                   return response.status(400).send();
             }     
 
-            if(typeof first_name !== 'string' || typeof last_name !== 'string' || typeof password !== 'string'){
+            if(typeof first_name !== 'string' || typeof last_name !== 'string' || typeof password !== 'string' || typeof email !== 'string'){
                   console.log('Invalid attribute types user controller update method');
                   return response.status(400).send();
             }
@@ -162,7 +164,17 @@ const updateUser = async(request, response) => {
                   return response.status(400).send();
             }
 
+            if(!email.match(emailFormat)){
+                  console.log('Invalid email format');
+                  return response.status(400).send();
+            }
+
             const username = request.authenticatedUser.username;
+
+            if(username !== email){
+                  console.log('Username and email do not match');
+                  return response.status(400).send();
+            }
             
             console.log('Username from updateUser controller: ', username);
 
@@ -173,7 +185,7 @@ const updateUser = async(request, response) => {
                   return response.status(403).send();
             }
 
-            return response.status(200).send();
+            return response.status(204).send();
       } catch(error){
             console.log('Error while updating user: ', error);
             return response.status(503).send();
