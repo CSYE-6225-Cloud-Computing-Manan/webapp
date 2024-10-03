@@ -35,7 +35,7 @@ describe('User Controller', () => {
         .send({ email: 'test@example.com', first_name: 'testF_Name', last_name: 'testL_Name', password: 'testUser12345' })
         .set('Content-Type', 'application/json');
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(201);
       expect(userService.createUser).toHaveBeenCalledWith('test@example.com', 'testF_Name', 'testL_Name', 'testUser12345');
     });
 
