@@ -1,4 +1,4 @@
-#this yml file is created to build webapp and run test cases
+# This YAML file is created to build web app and run test cases
 name: Webapp Test
 
 on:
@@ -7,8 +7,39 @@ on:
       - main
     
 jobs:
-    build_webapp_and_run_tests:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  build_webapp_and_run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install MySQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql.service
+
+      - name: Configure MySQL
+        run: |
+          sudo mysql --user=${{ secrets.DB_USERNAME }} --password=${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
+
+      - name: Configure environment variables
+        run: |
+          echo > .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_DIALECT=${{ secrets.DB_DIALECT }} >> .env
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
