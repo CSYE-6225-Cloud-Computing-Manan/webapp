@@ -12,3 +12,29 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '20'
+            - name: Install MySQL
+              run: |
+                  sudo apt-get update
+                  apt-get install -y mysql-server
+                  sudo systemctl start mysql
+                  sudo mysql -e "CREATE DATABASE ${{ secrets.DB_NAME }};"
+                  sudo mysql -e "CREATE USER '${{ secrets.DB_USERNAME }}'@'${{ secrets.DB_HOST }}' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';"
+                  sudo mysql -e "GRANT ALL PRIVILEGES ON ${{ secrets.DB_NAME }}.* TO '${{ secrets.DB_USERNAME }}'@'${{ secrets.DB_HOST }}';"
+            - name: Configure environment variables
+              run: |
+                echo > .env
+                echo PORT=${{ secrets.PORT }} >> .env
+                echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+                echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+                echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+                echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+                echo DB_DIALECT=${{ secrets.DB_DIALECT }} >> .env
+                echo PORT=${{ secrets.PORT }} >> .env
+            - name: Install Node dependencies
+              run: npm install
+            - name: Run tests
+              run: npm test
