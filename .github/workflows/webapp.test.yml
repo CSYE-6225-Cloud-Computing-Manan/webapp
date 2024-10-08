@@ -1,0 +1,14 @@
+#this yml file is created to build webapp and run test cases
+name: Webapp Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    
+jobs:
+    build_webapp_and_run_tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
