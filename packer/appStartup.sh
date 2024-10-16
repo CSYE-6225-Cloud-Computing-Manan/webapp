@@ -38,7 +38,7 @@ sudo mv /tmp/webapp.zip /home/csye-6225
 sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 
 # Change ownership of the webapp directory to appuser
-sudo chown -R csye6225:csye6225 /home/csye-6225
+sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
 # Create the MySQL database and set the database password
 echo "Creating MySQL database and setting permissions..."
@@ -49,7 +49,7 @@ sudo -E mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
 # Create the .env file for the application
 echo "Creating the .env file..."
-cd /home/csye-6225/webapp
+cd /home/csye-6225/webapp/webapp
 sudo touch .env
 sudo chmod 666 .env 
 echo PORT=$PORT | sudo tee -a .env
@@ -62,7 +62,7 @@ echo DB_DIALECT=$DB_DIALECT | sudo tee -a .env
 
 # Run npm install to install application dependencies
 echo "Running npm install..."
-cd /home/csye-6225/webapp
+cd /home/csye-6225/webapp/webapp
 sudo npm install
 
 
