@@ -12,7 +12,7 @@ router.use('/', (request, response, next) => {
   if (method !== 'GET' && method !== 'POST' && method !== 'PUT') {
     response.set('Cache-Control', 'no-cache');
     console.log('Wrong HTTPS method used in user routes');
-    return response.status(404).send();
+    return response.status(405).send();
   }
 
   if (method === 'POST' && path !== '/') {
