@@ -70,7 +70,7 @@ echo DB_DIALECT=$DB_DIALECT | sudo tee -a .env
 
 # Run npm install to install application dependencies
 echo "Running npm install..."
-cd /home/csye-6225/webapp/webapp
+cd /home/csye-6225/webapp
 sudo npm install
 
 

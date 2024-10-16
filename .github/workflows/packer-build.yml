@@ -13,6 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Copy webapp files
+        run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' . ./webapp && ls -R
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -51,11 +54,6 @@ jobs:
 
       - name: Run tests
         run: npm test
-
-      - name: Copy webapp files
-        run: |
-          zip -r webapp.zip ./
-          ls  -al
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
