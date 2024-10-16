@@ -39,20 +39,14 @@ jobs:
 
       - name: Configure MySQL
         run: |
-          echo "Configuring MySQL root user with password and creating the database."
-          sudo mysql -u root <<EOF
-          ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';
-          FLUSH PRIVILEGES;
-          CREATE DATABASE IF NOT EXISTS $DB_NAME;
-          GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-          EOF
+          sudo mysql --user=${{ secrets.DB_USERNAME }} --password=${{ secrets.WEBAPP_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
 
       - name: Configure environment variables
         run: |
           echo > .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
-          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_PASSWORD=${{ secrets.WEBAPP_PASSWORD }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_DIALECT=${{ secrets.DB_DIALECT }} >> .env
