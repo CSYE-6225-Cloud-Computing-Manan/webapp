@@ -41,7 +41,7 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
 # Create the MySQL database and set the database password
-ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}')
+ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysql/error.log | awk '{print $NF;}')
 echo "${ROOT_PASSWORD}"
 sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
 
