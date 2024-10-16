@@ -57,7 +57,7 @@ sudo -E mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
 # Create the .env file for the application
 echo "Creating the .env file..."
-cd /home/csye-6225/webapp/webapp
+cd /home/csye-6225/webapp
 sudo touch .env
 sudo chmod 666 .env 
 echo PORT=$PORT | sudo tee -a .env
