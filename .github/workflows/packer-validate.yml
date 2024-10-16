@@ -24,6 +24,12 @@ jobs:
         with:
           version: "latest"
 
+      - name: Packer init
+        id: packer_init
+        run: |
+          cd packer
+          packer init ./ami.pkr.hcl
+
       - name: Packer format check (fmt)
         id: packer_fmt
         run: |
