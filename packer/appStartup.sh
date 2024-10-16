@@ -41,14 +41,14 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
 # Create the MySQL database and set the database password
-ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysql/error.log | awk '{print $NF;}')
-echo "${ROOT_PASSWORD}"
-sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+# ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysql/error.log | awk '{print $NF;}')
+# echo "${ROOT_PASSWORD}"
+# sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
 
 # echo "Creating MySQL database and setting permissions..."
-# sudo -E mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
-# sudo -E mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
-# sudo -E mysql -u root -proot -e "FLUSH PRIVILEGES;"
+sudo mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
+sudo mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
+sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
 
 # Create the .env file for the application
@@ -76,6 +76,7 @@ sudo mv /tmp/startup.service /etc/systemd/system/startup.service
 sudo systemctl daemon-reload
 sudo systemctl enable startup.service
 sudo systemctl start startup.service
+sudo systemctl status startup.service
 
 echo "App startup process completed."
 
