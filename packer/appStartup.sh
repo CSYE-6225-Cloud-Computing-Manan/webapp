@@ -40,14 +40,6 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 # Change ownership of the webapp directory to appuser
 sudo chown -R csye6225:csye6225 /home/csye-6225
 
-# echoing the variables
-echo "DB_USERNAME: $DB_USERNAME"
-echo "DB_PASSWORD: $DB_PASSWORD"
-echo "DB_NAME: $DB_NAME"
-echo "DB_HOST: $DB_HOST"
-echo "DB_DIALECT: $DB_DIALECT"
-echo "PORT: $PORT"
-
 # Create the MySQL database and set the database password
 echo "Creating MySQL database and setting permissions..."
 sudo -E mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
