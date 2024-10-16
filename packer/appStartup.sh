@@ -35,10 +35,10 @@ sudo apt-get install -y unzip
 echo "Moving webapp.zip and unzipping the webapp"
 sudo mkdir -p /home/csye-6225
 sudo mv /tmp/webapp.zip /home/csye-6225
-sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp/webapp
+sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 
 # Change ownership of the webapp directory to appuser
-sudo chown -R csye6225:csye6225 /home/csye-6225/webapp/webapp
+sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
 # Create the MySQL database and set the database password
 ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}')
