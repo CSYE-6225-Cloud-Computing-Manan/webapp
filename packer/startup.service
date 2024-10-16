@@ -1,0 +1,20 @@
+[Unit]
+Description=Webapp Service
+ConditionPathExists=/home/csye-6225/webapp/webapp/.env
+After=network.target
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+EnvironmentFile=/home/csye-6225/webapp/webapp/.env
+WorkingDirectory=/home/csye-6225/webapp/webapp
+ExecStart=/usr/bin/node /home/csye-6225/webapp/webapp/index.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=cloudnative-app
+
+[Install]
+WantedBy=multi-user.target

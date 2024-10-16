@@ -1,0 +1,53 @@
+name: Packer Validate CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  packer-fmt-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy webapp files
+        run: |
+          zip -r webapp.zip ./
+          ls  -al
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: "latest"
+
+      - name: Packer format check (fmt)
+        id: packer_fmt
+        run: |
+          cd packer
+          packer fmt -check -diff ./ami.pkr.hcl
+        continue-on-error: false
+
+      - name: Packer validate
+        id: packer_validate
+        run: >
+          cd packer && 
+          packer validate -var 'aws_region=${{vars.AWS_REGION}}'
+          -var 'ssh_username=${{vars.SSH_USERNAME}}'
+          -var 'aws_access_key_id=${{secrets.ACCESS_KEY}}'
+          -var 'aws_secret_access_key=${{secrets.SECRET_ACCESS_KEY}}'
+          -var 'source_ami=${{vars.SOURCE_AMI}}'
+          -var 'ami_description=${{vars.AMI_DESCRIPTION}}'
+          -var 'instance_type=${{vars.INSTANCE_TYPE}}'
+          -var 'ami_name=${{vars.AMI_NAME}}'
+          -var 'subnet_id=${{vars.SUBNET_ID}}'
+          -var 'port=${{secrets.PORT}}'
+          -var 'db_username= ${{secrets.DB_USERNAME}}'
+          -var 'db_password= ${{secrets.DB_PASSWORD}}'
+          -var 'db_name= ${{secrets.DB_NAME}}'
+          -var 'db_host= ${{secrets.DB_HOST}}'
+          -var 'db_dialect= ${{secrets.DB_DIALECT}}'
+          ami.pkr.hcl
