@@ -101,7 +101,7 @@ jobs:
         id: packer_build
         run: >
           cd packer && 
-          packer validate -var 'aws_region=${{vars.AWS_REGION}}'
+          packer build -var 'aws_region=${{vars.AWS_REGION}}'
           -var 'ssh_username=${{vars.SSH_USERNAME}}'
           -var 'aws_access_key_id=${{secrets.ACCESS_KEY}}'
           -var 'aws_secret_access_key=${{secrets.SECRET_ACCESS_KEY}}'
