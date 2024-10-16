@@ -35,16 +35,20 @@ sudo apt-get install -y unzip
 echo "Moving webapp.zip and unzipping the webapp"
 sudo mkdir -p /home/csye-6225
 sudo mv /tmp/webapp.zip /home/csye-6225
-sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
+sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp/webapp
 
 # Change ownership of the webapp directory to appuser
-sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
+sudo chown -R csye6225:csye6225 /home/csye-6225/webapp/webapp
 
 # Create the MySQL database and set the database password
-echo "Creating MySQL database and setting permissions..."
-sudo -E mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
-sudo -E mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
-sudo -E mysql -u root -proot -e "FLUSH PRIVILEGES;"
+ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}')
+echo "${ROOT_PASSWORD}"
+sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+
+# echo "Creating MySQL database and setting permissions..."
+# sudo -E mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
+# sudo -E mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
+# sudo -E mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
 
 # Create the .env file for the application
