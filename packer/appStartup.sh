@@ -40,15 +40,24 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 # Change ownership of the webapp directory to appuser
 sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
-# Create the MySQL database and set the database password
-# ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysql/error.log | awk '{print $NF;}')
-# echo "${ROOT_PASSWORD}"
-# sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+# Updating MySQL root user authentication method to 'mysql_native_password'
+sudo mysql -u root -p <<EOF
+USE mysql;
+UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+FLUSH PRIVILEGES;
+EXIT;
+EOF
 
-# echo "Creating MySQL database and setting permissions..."
-sudo mysql -u root -proot -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';"
-sudo mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
-sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
+# Restart MySQL service
+sudo service mysql restart
+
+# Alter root user password and create the database
+sudo mysql -u root -p <<EOF
+ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+FLUSH PRIVILEGES;
+EXIT;
+EOF
 
 
 # Create the .env file for the application
