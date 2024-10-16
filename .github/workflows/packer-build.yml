@@ -16,6 +16,11 @@ jobs:
       - name: Copy webapp files
         run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' . ./webapp && ls -R
 
+      - name: Zip file
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -r webapp.zip webapp/
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
