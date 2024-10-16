@@ -8,11 +8,11 @@ packer {
 }
 
 variable "aws_region" {
-  type    = string
+  type = string
 }
 
 variable "ssh_username" {
-  type    = string
+  type = string
 }
 
 variable "aws_access_key_id" {
@@ -24,23 +24,23 @@ variable "aws_secret_access_key" {
 }
 
 variable source_ami {
-  type    = string
+  type = string
 }
 
 variable "ami_name" {
-  type    = string
+  type = string
 }
 
 variable "ami_description" {
-  type    = string
+  type = string
 }
 
 variable "instance_type" {
-  type    = string
+  type = string
 }
 
 variable "subnet_id" {
-  type    = string
+  type = string
 }
 
 variable "db_password" {
@@ -68,12 +68,12 @@ variable "db_dialect" {
 }
 
 source "amazon-ebs" "assignment4dev" {
-  ami_name      = "${var.ami_name}_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
+  ami_name        = "${var.ami_name}_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = var.ami_description
-  instance_type = var.instance_type
-  region        = var.aws_region
-  source_ami    = var.source_ami
-  subnet_id     = var.subnet_id
+  instance_type   = var.instance_type
+  region          = var.aws_region
+  source_ami      = var.source_ami
+  subnet_id       = var.subnet_id
 
   aws_polling {
     delay_seconds = 120
@@ -85,7 +85,7 @@ source "amazon-ebs" "assignment4dev" {
     volume_size = 8
     volume_type = "gp2"
   }
-  ssh_username  = var.ssh_username
+  ssh_username = var.ssh_username
 }
 
 build {
@@ -97,7 +97,7 @@ build {
   }
 
   provisioner "file" {
-    source = "../webapp.zip"
+    source      = "../webapp.zip"
     destination = "/tmp/webapp.zip"
   }
 
