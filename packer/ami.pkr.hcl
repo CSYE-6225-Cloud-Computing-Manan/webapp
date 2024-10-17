@@ -71,6 +71,22 @@ variable "db_dialect" {
   type = string
 }
 
+variable "volume_size" {
+  type = number
+}
+
+variable "volume_type" {
+  type = string
+}
+
+variable "delay_seconds" {
+  type = number
+}
+
+variable "max_attempts" {
+  type = number
+}
+
 source "amazon-ebs" "assignment4dev" {
   ami_name        = "${var.ami_name}_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = var.ami_description
@@ -83,14 +99,14 @@ source "amazon-ebs" "assignment4dev" {
   ami_users       = var.ami_users
 
   aws_polling {
-    delay_seconds = 120
-    max_attempts  = 50
+    delay_seconds = var.delay_seconds
+    max_attempts  = var.max_attempts
   }
 
   ami_block_device_mappings {
     device_name = "/dev/sda1"
-    volume_size = 8
-    volume_type = "gp2"
+    volume_size = var.volume_size
+    volume_type = var.volume_type
   }
   ssh_username = var.ssh_username
 }
