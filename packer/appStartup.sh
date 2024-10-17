@@ -82,6 +82,19 @@ echo "Running npm install..."
 cd /home/csye-6225/webapp/webapp
 sudo npm install
 
+# Remove git if it is present
+sudo apt-get remove -y git
+gitRemoved=$?
+
+if [ $gitRemoved -eq 0 ]; then 
+    echo "Git is present and it is removed successfully."
+else
+    echo "Git is not present."
+fi
+
+sudo rm -rf /home/csye-6225/webapp/webapp/.git
+sudo rm -f /home/csye-6225/webapp/webapp/.gitignore
+sudo rm -rf /home/csye-6225/webapp/webapp/.github
 
 # Enable and start the systemd service (assuming it is startup.service)
 echo "Enabling and starting systemd service..."

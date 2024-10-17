@@ -15,6 +15,10 @@ variable "ssh_username" {
   type = string
 }
 
+variable "ami_users" {
+  type = list(string)
+}
+
 variable "aws_access_key_id" {
   type = string
 }
@@ -71,9 +75,12 @@ source "amazon-ebs" "assignment4dev" {
   ami_name        = "${var.ami_name}_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = var.ami_description
   instance_type   = var.instance_type
+  access_key      = var.aws_access_key_id
+  secret_key      = var.aws_secret_access_key
   region          = var.aws_region
   source_ami      = var.source_ami
   subnet_id       = var.subnet_id
+  ami_users       = var.ami_users
 
   aws_polling {
     delay_seconds = 120
