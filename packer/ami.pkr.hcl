@@ -108,7 +108,7 @@ source "amazon-ebs" "assignment4dev" {
     volume_size = var.volume_size
     volume_type = var.volume_type
   }
-  ssh_username = varr.ssh_username
+  ssh_username = var.ssh_username
 }
 
 build {
