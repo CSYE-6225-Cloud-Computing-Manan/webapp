@@ -28,7 +28,7 @@ variable "aws_secret_access_key" {
 }
 
 variable source_ami {
-  type =string
+  type = string
 }
 
 variable "ami_name" {
@@ -108,7 +108,7 @@ source "amazon-ebs" "assignment4dev" {
     volume_size = var.volume_size
     volume_type = var.volume_type
   }
-  ssh_username = var.ssh_username
+  ssh_username = varr.ssh_username
 }
 
 build {
