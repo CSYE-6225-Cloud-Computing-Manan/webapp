@@ -28,7 +28,7 @@ variable "aws_secret_access_key" {
 }
 
 variable source_ami {
-  type = string
+  type =string
 }
 
 variable "ami_name" {
