@@ -9,18 +9,27 @@ router.use('/', (request, response, next) => {
   const method = request.method;
   const path = request.path;
 
-  if (method !== 'GET' && method !== 'POST' && method !== 'PUT') {
-    response.set('Cache-Control', 'no-cache');
-    console.log('Wrong HTTPS method used in user routes');
+  if (path === '/' && method !== 'POST') {
+    console.log('Only POST method is allowed on "/"');
     return response.status(405).send();
   }
 
-  if (method === 'POST' && path !== '/') {
+  if (path !== '/' && method === 'POST') {
     console.log('POST request beyond "/" is not allowed');
     return response.status(404).send();
   }
 
-  if ((method === 'GET' || method === 'PUT') && path !== '/self') {
+  if (path !== '/' && method !== 'POST') {
+    console.log('Method not allowed for non-root paths');
+    return response.status(405).send();
+  }
+
+  if (path === '/self' && method !== 'GET' && method !== 'PUT') {
+    console.log(`Method ${method} is not allowed on "/self"`);
+    return response.status(405).send();
+  }
+
+  if (path !== '/self' && (method === 'GET' || method === 'PUT')) {
     console.log(`${method} request beyond '/self' is not allowed`);
     return response.status(404).send();
   }
