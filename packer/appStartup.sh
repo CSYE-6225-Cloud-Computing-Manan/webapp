@@ -23,10 +23,10 @@ sudo node -v
 sudo npm -v
 
 # Install MySQL
-echo "Installing MySQL."
-sudo apt-get install -y mysql-server 
-sudo systemctl start mysql
-sudo systemctl start mysql
+# echo "Installing MySQL."
+# sudo apt-get install -y mysql-server 
+# sudo systemctl start mysql
+# sudo systemctl start mysql
 
 
 # Install unzip
@@ -43,38 +43,38 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
 # echoing the variables
-echo "DB_USERNAME: $DB_USERNAME"
-echo "DB_PASSWORD: $DB_PASSWORD"
-echo "DB_NAME: $DB_NAME"
-echo "DB_HOST: $DB_HOST"
-echo "DB_DIALECT: $DB_DIALECT"
-echo "PORT: $PORT"
+# echo "DB_USERNAME: $DB_USERNAME"
+# echo "DB_PASSWORD: $DB_PASSWORD"
+# echo "DB_NAME: $DB_NAME"
+# echo "DB_HOST: $DB_HOST"
+# echo "DB_DIALECT: $DB_DIALECT"
+# echo "PORT: $PORT"
 
 # Alter root user password and create the database
-echo "Configuring MySQL root user with password and creating the database."
-sudo mysql -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';
-FLUSH PRIVILEGES;
-CREATE DATABASE IF NOT EXISTS $DB_NAME;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-EOF
+# echo "Configuring MySQL root user with password and creating the database."
+# sudo mysql -u root <<EOF
+# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';
+# FLUSH PRIVILEGES;
+# CREATE DATABASE IF NOT EXISTS $DB_NAME;
+# GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+# EOF
 
 # Check if the database was created successfully
-echo "Verifying if the database $DB_NAME was created."
-sudo mysql -u root -p'manan1234' -e "SHOW DATABASES LIKE '$DB_NAME';"
+# echo "Verifying if the database $DB_NAME was created."
+# sudo mysql -u root -p'manan1234' -e "SHOW DATABASES LIKE '$DB_NAME';"
 
 
 # Create the .env file for the application
-echo "Creating the .env file..."
-cd /home/csye-6225/webapp/webapp
-sudo touch .env
-sudo chmod 666 .env 
-echo PORT=$PORT | sudo tee -a .env
-echo DB_USERNAME=$DB_USERNAME | sudo tee -a .env
-echo DB_PASSWORD=$DB_PASSWORD | sudo tee -a .env
-echo DB_NAME=$DB_NAME | sudo tee -a .env
-echo DB_HOST=$DB_HOST | sudo tee -a .env
-echo DB_DIALECT=$DB_DIALECT | sudo tee -a .env
+# echo "Creating the .env file..."
+# cd /home/csye-6225/webapp/webapp
+# sudo touch .env
+# sudo chmod 666 .env 
+# echo PORT=$PORT | sudo tee -a .env
+# echo DB_USERNAME=$DB_USERNAME | sudo tee -a .env
+# echo DB_PASSWORD=$DB_PASSWORD | sudo tee -a .env
+# echo DB_NAME=$DB_NAME | sudo tee -a .env
+# echo DB_HOST=$DB_HOST | sudo tee -a .env
+# echo DB_DIALECT=$DB_DIALECT | sudo tee -a .env
 
 
 # Run npm install to install application dependencies
@@ -100,12 +100,12 @@ sudo rm -rf /home/csye-6225/webapp/webapp/.github
 echo "Enabling and starting systemd service..."
 sudo mv /tmp/startup.service /etc/systemd/system/startup.service
 sudo systemctl daemon-reload
-sudo systemctl enable startup.service
-sudo systemctl start startup.service
-sudo systemctl status startup.service
-sudo journalctl -u startup.service
+# sudo systemctl enable startup.service
+# # sudo systemctl start startup.service
+# sudo systemctl status startup.service
+# sudo journalctl -u startup.service
 
 
-echo "App startup process completed."
+echo "AMI build process completed."
 
 

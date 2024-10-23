@@ -47,29 +47,29 @@ variable "subnet_id" {
   type = string
 }
 
-variable "db_password" {
-  type = string
-}
+// variable "db_password" {
+//   type = string
+// }
 
-variable "port" {
-  type = number
-}
+// variable "port" {
+//   type = number
+// }
 
-variable "db_username" {
-  type = string
-}
+// variable "db_username" {
+//   type = string
+// }
 
-variable "db_name" {
-  type = string
-}
+// variable "db_name" {
+//   type = string
+// }
 
-variable "db_host" {
-  type = string
-}
+// variable "db_host" {
+//   type = string
+// }
 
-variable "db_dialect" {
-  type = string
-}
+// variable "db_dialect" {
+//   type = string
+// }
 
 variable "volume_size" {
   type = number
@@ -128,12 +128,12 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
-      "DB_PASSWORD=${var.db_password}",
+      /*"DB_PASSWORD=${var.db_password}",
       "PORT=${var.port}",
       "DB_USERNAME=${var.db_username}",
       "DB_NAME=${var.db_name}",
       "DB_HOST=${var.db_host}",
-      "DB_DIALECT=${var.db_dialect}"
+      "DB_DIALECT=${var.db_dialect}"*/
     ]
     script = "./appStartup.sh"
   }
