@@ -97,12 +97,6 @@ jobs:
           -var 'max_attempts=${{vars.MAX_ATTEMPTS}}'
           -var 'volume_size=${{vars.VOLUME_SIZE}}'
           -var 'volume_type=${{vars.VOLUME_TYPE}}'
-          -var 'port=${{secrets.PORT}}'
-          -var 'db_username=${{secrets.DB_USERNAME}}'
-          -var 'db_password=${{secrets.DB_PASSWORD}}'
-          -var 'db_name=${{secrets.DB_NAME}}'
-          -var 'db_host=${{secrets.DB_HOST}}'
-          -var 'db_dialect=${{secrets.DB_DIALECT}}'
           ami.pkr.hcl
 
       - name: Packer build
@@ -123,10 +117,4 @@ jobs:
           -var 'max_attempts=${{vars.MAX_ATTEMPTS}}'
           -var 'volume_size=${{vars.VOLUME_SIZE}}'
           -var 'volume_type=${{vars.VOLUME_TYPE}}'
-          -var 'port=${{secrets.PORT}}'
-          -var 'db_username=${{secrets.DB_USERNAME}}'
-          -var 'db_password=${{secrets.DB_PASSWORD}}'
-          -var 'db_name=${{secrets.DB_NAME}}'
-          -var 'db_host=${{secrets.DB_HOST}}'
-          -var 'db_dialect=${{secrets.DB_DIALECT}}'
           ami.pkr.hcl
