@@ -4,6 +4,8 @@ const userController = require('../controller/userController.js');
 const userService = require('../service/userService.js');
 const healthService = require('../service/healthService.js');
 const { sequelize } = require('../config/db.config.js');
+const Client = require('node-statsd');
+const client = new Client("localhost", 8125);
 
 jest.mock('../service/userService.js');
 jest.mock('../service/healthService.js');
@@ -15,6 +17,7 @@ beforeAll(async () => {
     
     afterAll(async () => {
       await sequelize.close();
+      await client.close();
     });
 
 const app = express();
