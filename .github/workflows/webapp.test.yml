@@ -52,6 +52,4 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm test -- --detectOpenHandles
-        env:
-          CI: true
+        run: npm test -- --forceExit --detectOpenHandles
