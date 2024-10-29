@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/userSchema.js');
+const logger = require('../utils/logger.js');
+const { log } = require('util');
 
 const userAuthencation = async (request, response, next) => {
       try{
@@ -26,8 +28,10 @@ const userAuthencation = async (request, response, next) => {
             });
       
               if (!user) {
+                  logger.error('User not found from auth middleware');
                   return response.status(401).send();
               }else if(user && !(await bcrypt.compare(password, user.password))){
+                  logger.error('Invalid password from auth middleware');
                   return response.status(401).send();
               }
 
@@ -39,6 +43,7 @@ const userAuthencation = async (request, response, next) => {
               console.log(request.authenticatedUser);
               next();
       }catch (error) {
+            logger.error('Error while authenticating user from auth middleware: ' + error);
             console.log('Error while authenticating user: ', error);
             return response.status(503).send();
       }

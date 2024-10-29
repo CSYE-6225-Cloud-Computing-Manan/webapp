@@ -42,40 +42,16 @@ sudo unzip /home/csye-6225/webapp.zip -d /home/csye-6225/webapp
 # Change ownership of the webapp directory to appuser
 sudo chown -R csye6225:csye6225 /home/csye-6225/webapp
 
-# echoing the variables
-# echo "DB_USERNAME: $DB_USERNAME"
-# echo "DB_PASSWORD: $DB_PASSWORD"
-# echo "DB_NAME: $DB_NAME"
-# echo "DB_HOST: $DB_HOST"
-# echo "DB_DIALECT: $DB_DIALECT"
-# echo "PORT: $PORT"
+# Download and install the CloudWatch Agent
+sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 
-# Alter root user password and create the database
-# echo "Configuring MySQL root user with password and creating the database."
-# sudo mysql -u root <<EOF
-# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD';
-# FLUSH PRIVILEGES;
-# CREATE DATABASE IF NOT EXISTS $DB_NAME;
-# GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-# EOF
+# Install the downloaded package
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
-# Check if the database was created successfully
-# echo "Verifying if the database $DB_NAME was created."
-# sudo mysql -u root -p'manan1234' -e "SHOW DATABASES LIKE '$DB_NAME';"
+# Clean up the downloaded .deb file
+sudo rm amazon-cloudwatch-agent.deb
 
-
-# Create the .env file for the application
-# echo "Creating the .env file..."
-# cd /home/csye-6225/webapp/webapp
-# sudo touch .env
-# sudo chmod 666 .env 
-# echo PORT=$PORT | sudo tee -a .env
-# echo DB_USERNAME=$DB_USERNAME | sudo tee -a .env
-# echo DB_PASSWORD=$DB_PASSWORD | sudo tee -a .env
-# echo DB_NAME=$DB_NAME | sudo tee -a .env
-# echo DB_HOST=$DB_HOST | sudo tee -a .env
-# echo DB_DIALECT=$DB_DIALECT | sudo tee -a .env
-
+sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 
 # Run npm install to install application dependencies
 echo "Running npm install..."
@@ -100,10 +76,17 @@ sudo rm -rf /home/csye-6225/webapp/webapp/.github
 echo "Enabling and starting systemd service..."
 sudo mv /tmp/startup.service /etc/systemd/system/startup.service
 sudo systemctl daemon-reload
+sudo systemctl enable amazon-cloudwatch-agent
 # sudo systemctl enable startup.service
 # # sudo systemctl start startup.service
 # sudo systemctl status startup.service
 # sudo journalctl -u startup.service
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+        -a fetch-config \
+        -m ec2 \
+        -c file:/opt/cloudwatch-config.json \
+        -s
 
 
 echo "AMI build process completed."

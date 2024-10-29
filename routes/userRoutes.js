@@ -19,10 +19,10 @@ router.use('/', (request, response, next) => {
     return response.status(404).send();
   }
 
-  if (path !== '/' && method !== 'POST') {
-    console.log('Method not allowed for non-root paths');
-    return response.status(405).send();
-  }
+  // if (path !== '/' && method !== 'POST') {
+  //   console.log('Method not allowed for non-root paths');
+  //   return response.status(405).send();
+  // }
 
   if (path === '/self' && method !== 'GET' && method !== 'PUT') {
     console.log(`Method ${method} is not allowed on "/self"`);
@@ -40,5 +40,8 @@ router.use('/', (request, response, next) => {
 router.post('/', userController.createUser);
 router.get('/self', authMiddleware, userController.getUser);
 router.put('/self', authMiddleware, userController.updateUser);
+router.post('/self/pic', authMiddleware, userController.uploadProfilePic);
+router.get('/self/pic', authMiddleware, userController.getProfilePic);
+router.delete('/self/pic', authMiddleware, userController.deleteProfilePic);
 
 module.exports = router;
