@@ -53,3 +53,5 @@ jobs:
 
       - name: Run tests
         run: npm test -- --detectOpenHandles
+        env:
+          CI: true
