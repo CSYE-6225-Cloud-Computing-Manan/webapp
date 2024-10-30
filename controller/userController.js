@@ -29,6 +29,8 @@ const createUser = async(request, response) => {
             console.log('content type at user controller: ' + request.headers['content-type']);
             console.log('Request body from createUser controller: ', request.body);
 
+            console.log('request authorization value: ' + request.headers.authorization);
+            
             if(Object.keys(request.query).length > 0 || request.headers['content-type'] != 'application/json'){
                   console.log('Invalid request body for user controller create method');
                   logger.error('Invalid request body for user controller create method');
@@ -314,7 +316,8 @@ const uploadProfilePic = async(request, response) => {
       }
 
       try{
-            if(Object.keys(request.query).length > 0 || request.headers['content-type'] != 'multipart/form-data'){
+            console.log('content type at user controller at upload: ' + request.headers['content-type']);
+            if(Object.keys(request.query).length > 0){
                   logger.error('Invalid request body for uploadProfilePic method');
                   console.log('Invalid request body for uploadProfilePic method');
                   const duration = Date.now() - startTime;
@@ -345,6 +348,8 @@ const uploadProfilePic = async(request, response) => {
             }
 
             const ifProfilePicExists = await userService.getProfilePic(username);
+
+            console.log('Profile pic exists: ' + ifProfilePicExists);
 
             if(ifProfilePicExists){
                   console.log('Profile pic already exists: ' + ifProfilePicExists);
@@ -420,7 +425,7 @@ const getProfilePic = async(request, response) => {
                   logger.error('Profile Pic not found: ' + profilePic);
                   const duration = Date.now() - startTime;
                   client.timing('getProfilePic controller', duration);
-                  return response.status(403).send();
+                  return response.status(404).send();
             }
 
             logger.info('Profile pic found successfully:' + profilePic);

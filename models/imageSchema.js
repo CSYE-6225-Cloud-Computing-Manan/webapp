@@ -30,15 +30,10 @@ const Image = sequelize.define('Image', {
             },
       },
       upload_date: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             defaultValue: DataTypes.NOW,
             allowNull: false,
             readOnly: true,
-            // get() {
-            //       // Format the date to 'YYYY-MM-DD'
-            //       const rawDate = this.getDataValue('upload_date');
-            //       return rawDate ? rawDate.toISOString().split('T')[0] : null;
-            // }
       },
       user_id: {
             type: DataTypes.UUID,
@@ -47,3 +42,5 @@ const Image = sequelize.define('Image', {
             readOnly: true,
       },
 });
+
+module.exports = Image;
