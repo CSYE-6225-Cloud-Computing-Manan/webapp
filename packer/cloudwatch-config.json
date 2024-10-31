@@ -8,8 +8,8 @@
           "files": {
             "collect_list": [
               {
-                "file_path": "/var/log/csye-6225.log",
-                "log_group_name": "csye-6225",
+                "file_path": "/home/csye-6225/webapp/webapp/logs/csye-6225.log",
+                "log_group_name": "csye6225",
                 "log_stream_name": "webapp"
               }
             ]
