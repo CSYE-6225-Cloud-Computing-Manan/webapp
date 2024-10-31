@@ -26,7 +26,7 @@ function uploadFile(file, userId) {
 
 
 function deleteFile(filename, userId) {
-  console.log('filename: ' + userId + '/' + uuidv4() + '/' + filename);
+  //console.log('filename: ' + userId + '/' + uuidv4() + '/' + filename);
   const deleteParams = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: userId + '/' + filename,
