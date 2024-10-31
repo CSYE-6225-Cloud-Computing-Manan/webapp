@@ -37,11 +37,12 @@ router.use((request, response, next) => {
   next();
 });
 
+
 // Route handlers
 router.post('/', userController.createUser);
 router.get('/self', authMiddleware, userController.getUser);
 router.put('/self', authMiddleware, userController.updateUser);
-router.post('/self/pic', authMiddleware, upload.single('file'), userController.uploadProfilePic);
+router.post('/self/pic', authMiddleware, upload.single('profilePic'), userController.uploadProfilePic);
 router.get('/self/pic', authMiddleware, userController.getProfilePic);
 router.delete('/self/pic', authMiddleware, userController.deleteProfilePic);
 
