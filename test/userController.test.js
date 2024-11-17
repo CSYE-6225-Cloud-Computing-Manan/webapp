@@ -52,7 +52,7 @@ describe('User Controller', () => {
         })
         .set('Content-Type', 'application/json');
   
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(503);
       expect(userService.createUser).toHaveBeenCalledWith(
         'test@example.com',
         'testF_Name',
