@@ -7,8 +7,9 @@ const logger = require('../utils/logger.js');
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink)
 const client = require('../middleware/statsD.js');
+const { add } = require('winston');
 
-const createUser = async(email, first_name, last_name, password) => {
+const createUser = async(email, first_name, last_name, password, verificationToken) => {
       try{
             const userFindStartTime = Date.now();
             const existingUser = await User.findOne({ where: {
@@ -27,7 +28,9 @@ const createUser = async(email, first_name, last_name, password) => {
                   email: email,
                   first_name: first_name,
                   last_name: last_name,
-                  password: hashedPassword
+                  password: hashedPassword,
+                  isVerifiedAccount: false,
+                  verificationToken: verificationToken
             });
             const userCreateDuration = Date.now() - userCreateStartTime;
             client.timing('user.create.createUser.Service', userCreateDuration);
@@ -242,4 +245,86 @@ const deleteProfilePic = async(username) => {
       }
 }
 
-module.exports = { createUser, getUser, updateUser, uploadProfilePic, getProfilePic, deleteProfilePic };
+const verifyUser = async(username, verificationToken) => {
+      try{
+            const userFindStartTime = Date.now();
+            const user = await User.findOne({ where: {
+                  email: username
+            }});
+            const userFindDuration = Date.now() - userFindStartTime;
+            client.timing('user.find.verifyUser.Service', userFindDuration);
+            if(!user){
+                  logger.error('User not found from verifyUser service');
+                  return null;
+            }
+
+            if(user.isVerifiedAccount){
+                  logger.error('User already verified from verifyUser service');
+                  return { message: '409' };
+            }
+
+            console.log('user.verificationToken: ', user.verificationToken);
+            console.log('verificationToken: ', verificationToken);
+
+            if(user.verificationToken !== verificationToken){
+                  logger.error('Verification token does not match from verifyUser service');
+                  return false;
+            }
+            const currentTime = Date.now();
+            console.log('currentTime in verifyUser: ', currentTime);
+            console.log('user.expTime in verifyUser: ', user.expTime);
+            if(currentTime > user.expTime){
+                  logger.error('Verification token expired from verifyUser service');
+                  console.log('Verification token expired');
+                  return false;
+            }
+
+            user.isVerifiedAccount = true;
+
+            const userUpdateStartTime = Date.now();
+            await user.save();
+            const userUpdateDuration = Date.now() - userUpdateStartTime;
+            client.timing('user.update.verifyUser.Service', userUpdateDuration);
+            logger.info('User verified successfully from verifyUser service');
+            return true;
+      }
+      catch(error){
+            logger.error('Error while verifying user from verifyUser service: ' + error);
+            console.log('Error while verifying user: ', error);
+            return null;
+      }
+}
+
+const addExpTime = async(email) => {
+      try{
+            const userFindStartTime = Date.now();
+            const user = await User.findOne({ where: {
+                  email: email
+            }});
+            console.log('user in add exp time: ', user);
+            const userFindDuration = Date.now() - userFindStartTime;
+            client.timing('user.find.addExpTime.Service', userFindDuration);
+            if(!user){
+                  logger.error('User not found from addExpTime service');
+                  return null;
+            }
+            // add expTime 2 mins from current time
+            const expTimer = new Date(Date.now() + (2 * 60 * 1000));
+            user.expTime = expTimer;
+            console.log('user in add exp time after adding expTime: ', user);
+            const userUpdateStartTime = Date.now();
+            await user.save();
+            console.log('user in add exp time after saving: ', user);
+            const userUpdateDuration = Date.now() - userUpdateStartTime;
+            client.timing('user.update.addExpTime.Service', userUpdateDuration);
+            return user;
+      }
+      catch(error){
+            logger.error('Error while adding expTime from addExpTime service: ' + error);
+            console.log('Error while adding expTime: ', error);
+            return null;
+      }
+}
+
+
+module.exports = { createUser, getUser, updateUser, uploadProfilePic, getProfilePic, deleteProfilePic, verifyUser, addExpTime };

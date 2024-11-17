@@ -63,6 +63,19 @@ const User = sequelize.define('User', {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false,
+      }, 
+      isVerifiedAccount: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+      },
+      verificationToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+      },
+      expTime: {
+            type: DataTypes.DATE,
+            allowNull: true,
       }
 },
       {

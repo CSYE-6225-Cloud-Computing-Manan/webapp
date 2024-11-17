@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controller/userController.js');
 const authMiddleware = require('../middleware/authenticateBasic.js');
+const verifiedUserMiddleware = require('../middleware/verifiedUserMiddleware.js');
 const multer = require('multer');
 const upload = multer({ dest: __dirname + '/uploads/' });
 
@@ -28,7 +29,7 @@ router.use((request, response, next) => {
     return response.status(405).send('Method Not Allowed');
   }
   // If the path doesn't match any of the defined routes
-  else if (path !== '/' && path !== '/self' && path !== '/self/pic') {
+  else if (path !== '/' && path !== '/verify' && path !== '/self' && path !== '/self/pic') {
     console.log("Invalid request path");
     return response.status(404).send('Not Found');
   }
@@ -40,10 +41,11 @@ router.use((request, response, next) => {
 
 // Route handlers
 router.post('/', userController.createUser);
-router.get('/self', authMiddleware, userController.getUser);
-router.put('/self', authMiddleware, userController.updateUser);
-router.post('/self/pic', authMiddleware, upload.single('profilePic'), userController.uploadProfilePic);
-router.get('/self/pic', authMiddleware, userController.getProfilePic);
-router.delete('/self/pic', authMiddleware, userController.deleteProfilePic);
+router.get('/verify', userController.verifyUser);
+router.get('/self', authMiddleware, verifiedUserMiddleware, userController.getUser);
+router.put('/self', authMiddleware, verifiedUserMiddleware, userController.updateUser);
+router.post('/self/pic', authMiddleware, verifiedUserMiddleware, upload.single('profilePic'), userController.uploadProfilePic);
+router.get('/self/pic', authMiddleware, verifiedUserMiddleware, userController.getProfilePic);
+router.delete('/self/pic', authMiddleware, verifiedUserMiddleware, userController.deleteProfilePic);
 
 module.exports = router;
