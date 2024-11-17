@@ -2,6 +2,9 @@ const userService = require('../service/userService.js');
 const healthService = require('../service/healthService.js');
 const logger = require('../utils/logger.js');
 const client = require('../middleware/statsD.js');
+const AWS = require('aws-sdk');
+const sns = new AWS.SNS({ region: process.env.AWS_REGION });
+const uuid = require('uuid');
 
 const createUser = async(request, response) => {
       const startTime = Date.now();
@@ -84,7 +87,8 @@ const createUser = async(request, response) => {
                   return response.status(400).send(); //bad request
             }
             
-            const user = await userService.createUser(email, first_name, last_name, password);
+            const verificationToken = uuid.v4();
+            const user = await userService.createUser(email, first_name, last_name, password, verificationToken);
 
             if(user === null){
                   console.log('User already exists: ' + user);
@@ -97,6 +101,34 @@ const createUser = async(request, response) => {
             logger.info('User created successfully: ' + user);
             const duration = Date.now() - startTime;
             client.timing('createUser controller', duration);
+
+            // Publish message to SNS
+            const messagePayload = {
+                  email: user.email,
+                  verificationToken: user.verificationToken
+            };
+
+            console.log('Message payload: ', messagePayload);
+
+            const params = {
+                  Message: JSON.stringify(messagePayload),
+                  TopicArn: process.env.SNS_TOPIC_ARN // replace with your SNS Topic ARN
+            };
+
+            await sns.publish(params).promise();
+            logger.info('Verification email sent to SNS topic');
+            //add expTime to the database for the user
+            const result = await userService.addExpTime(email);
+
+            if(!result){
+                  console.log('Error while adding expTime to the database');
+                  logger.error('Error while adding expTime to the database');
+                  const duration = Date.now() - startTime;
+                  client.timing('createUser controller', duration);
+                  return response.status(400).send();
+            }
+            
+
             return response.status(201).send({
                   Id: user.id,
                   first_name: user.first_name,
@@ -511,4 +543,59 @@ const deleteProfilePic = async(request, response) => {
 
 }
 
-module.exports = { createUser, getUser, updateUser, uploadProfilePic, getProfilePic, deleteProfilePic };
+const verifyUser = async(request, response) => {
+      client.increment('verifyUser controller');
+      const startTime = Date.now();
+      response.set('Cache-Control', 'no-cache');
+
+      console.log('Request query from verifyUser controller: ', request.query);
+
+      try{
+            if(Object.keys(request.query).length !== 2){
+                  console.log('Invalid request query for verifyUser controller');
+                  logger.error('Invalid request query for verifyUser controller');
+                  const duration = Date.now() - startTime;
+                  client.timing('verifyUser controller', duration);
+                  return response.status(400).send();
+            }
+
+            //extract email and verification token from the query params
+            const username = request.query.email;
+            const verificationToken = request.query.token;
+            console.log('Email from verifyUser controller: ', username, ' verificationToken: ', verificationToken);
+            logger.info('Email from verifyUser controller: ' + username + ' verificationToken: ' + verificationToken);
+
+            //send email and verification to the user service
+            const result = await userService.verifyUser(username, verificationToken);
+
+            if(!result){
+                  console.log('Verification failed');
+                  logger.error('Verification failed');
+                  const duration = Date.now() - startTime;
+                  client.timing('verifyUser controller', duration);
+                  return response.status(400).send();
+            }
+
+            if(result.message === '409'){
+                  console.log('User already verified');
+                  logger.error('User already verified');
+                  const duration = Date.now() - startTime;
+                  client.timing('verifyUser controller', duration);
+                  return response.status(409).send();
+            }
+
+            logger.info('User verified successfully: ' + result);
+            const duration = Date.now() - startTime;
+            client.timing('verifyUser controller', duration);
+            return response.status(200).send();
+
+      }catch(error){
+            console.log('Error while verifying user: ', error);
+            logger.error('Error while verifying user: ', error);
+            const duration = Date.now() - startTime;
+            client.timing('verifyUser controller', duration);
+            return response.status(503).send();
+      }
+}
+
+module.exports = { createUser, getUser, updateUser, uploadProfilePic, getProfilePic, deleteProfilePic, verifyUser };

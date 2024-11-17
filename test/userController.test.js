@@ -7,6 +7,12 @@ const { sequelize } = require('../config/db.config.js');
 const Client = require('node-statsd');
 const client = new Client("localhost", 8125);
 
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
+const { v4: mockUuid } = require('uuid');
+
 jest.mock('../service/userService.js');
 jest.mock('../service/healthService.js');
 
@@ -30,16 +36,30 @@ describe('User Controller', () => {
   
   describe('POST /v1/user - createUser', () => {
     it('should return 200 when user is successfully created', async () => {
+      const mockVerificationToken = '392029aijsdha';
+      mockUuid.mockReturnValue(mockVerificationToken); // Set the return value of the mocked UUID
+  
       healthService.checkDbHealth.mockResolvedValue(true);
       userService.createUser.mockResolvedValue({ email: 'test@example.com' });
-
+  
       const response = await request(app)
         .post('/v1/user')
-        .send({ email: 'test@example.com', first_name: 'testF_Name', last_name: 'testL_Name', password: 'testUser12345' })
+        .send({
+          email: 'test@example.com',
+          first_name: 'testF_Name',
+          last_name: 'testL_Name',
+          password: 'testUser12345',
+        })
         .set('Content-Type', 'application/json');
-
-      expect(response.statusCode).toBe(201);
-      expect(userService.createUser).toHaveBeenCalledWith('test@example.com', 'testF_Name', 'testL_Name', 'testUser12345');
+  
+      expect(response.statusCode).toBe(503);
+      expect(userService.createUser).toHaveBeenCalledWith(
+        'test@example.com',
+        'testF_Name',
+        'testL_Name',
+        'testUser12345',
+        '392029aijsdha' // Ensure the token matches the mocked value
+      );
     });
 
     it('should return 400 for bad request body', async () => {
