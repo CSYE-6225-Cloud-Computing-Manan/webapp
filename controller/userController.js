@@ -39,7 +39,7 @@ const createUser = async(request, response) => {
                   logger.error('Invalid request body for user controller create method');
                   const duration = Date.now() - startTime;
                   client.timing('createUser controller', duration);
-                  return response.status(400).send(); //bad request
+                  return response.status(400).send(); //bad request 400
             }
             
             const {first_name, last_name, password, email, ...ignoredFields} = request.body;
