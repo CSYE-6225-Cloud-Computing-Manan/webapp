@@ -18,6 +18,13 @@ router.use((request, response, next) => {
     console.log('Only POST method is allowed on "/"');
     return response.status(405).send('Method Not Allowed');
   }
+
+  // Allow only GET on '/verify'
+  else if (path === '/verify' && method !== 'GET') {
+    console.log('Only GET method is allowed on "/verify"');
+    return response.status(405).send('Method Not Allowed');
+  }
+
   // Allow only GET and PUT on '/self'
   else if (path === '/self' && method !== 'GET' && method !== 'PUT') {
     console.log(`Method ${method} is not allowed on "/self"`);
