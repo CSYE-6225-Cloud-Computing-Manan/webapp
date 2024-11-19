@@ -146,9 +146,9 @@ jobs:
       - name: Create new Launch Template version
         id: create_lt_version
         run: |
-          TEMPLATE_ID=$(aws ec2 describe-launch-templates \
-            --filters "Name=tag:Name,Values=csye6225_asg_instance" \
-            --query 'LaunchTemplates[0].LaunchTemplateId' \
+          TEMPLATE_ID=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names "${{ vars.ASG_NAME }}" \
+            --query 'AutoScalingGroups[0].LaunchTemplate.LaunchTemplateId' \
             --output text)
           
           # Verify that we got a template ID
