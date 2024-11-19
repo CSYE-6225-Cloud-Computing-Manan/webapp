@@ -146,7 +146,16 @@ jobs:
       - name: Create new Launch Template version
         id: create_lt_version
         run: |
-          TEMPLATE_ID="${{ vars.LAUNCH_TEMPLATE_ID }}"
+          TEMPLATE_ID=$(aws ec2 describe-launch-templates \
+            --filters "Name=tag:Name,Values=csye6225_asg_instance" \
+            --query 'LaunchTemplates[0].LaunchTemplateId' \
+            --output text)
+          
+          # Verify that we got a template ID
+          if [ -z "$TEMPLATE_ID" ] || [ "$TEMPLATE_ID" = "None" ]; then
+            echo "Error: Could not find Launch Template"
+            exit 1
+          fi
           AMI_ID="${{ steps.extract_ami.outputs.AMI_ID }}"
           
           if [ -z "$AMI_ID" ]; then
