@@ -42,7 +42,7 @@ Prequisites to build and deploy the web application locally, follow these steps:
    ```
    Replace the placeholders with your **MySQL** credentials.
 
-5. **Run the Application**  
+5. **Run the Applications**  
    Start the application:
    ```bash
    node index.js
