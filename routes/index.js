@@ -7,6 +7,8 @@ console.log('index.js routes');
 
 router.use('/healthz', healthRoutes);
 
+router.use('/cicd', healthRoutes);
+
 router.use('/v1/user', userRoutes);
 
 router.all('/', (request, response) => {
